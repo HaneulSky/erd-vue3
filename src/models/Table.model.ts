@@ -28,7 +28,7 @@ export interface Relation {
   id: string | number;
   source?: Entity;
   target?: Entity;
-  datatype?: RelationType;
+  datatype?: Datatype;
   sourceField?: Field;
   targetField?: Field;
   type?: string | null;
