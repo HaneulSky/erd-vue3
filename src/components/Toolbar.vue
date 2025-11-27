@@ -43,7 +43,7 @@
 import { ref, computed } from 'vue';
 import EntityTab from './EntityTab.vue';
 import RelationTab from './RelationTab.vue';
-import type { Entity, Datatype, Relation, Field } from '../models/Table.model'
+import type { Entity, Datatype, Relation } from '../models/Table.model'
 
 const props = defineProps<{
   tables: Entity[];
