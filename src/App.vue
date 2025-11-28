@@ -11,7 +11,7 @@
       @update:table="updateTable"
       @delete:table="deleteTable"
       @create:field="createField"
-      @update:field="createField"
+      @update:field="updateField"
     />
   </div>
 </template>
@@ -225,13 +225,16 @@ const deleteTable = ({ table }: { table: number }) => {
 };
 
 const createField = ({ table }: { table: number }) => {
-  console.log(table);
   const tableIndex = tables.value.findIndex(t => t.id === table);
   tables.value[tableIndex].fields.push({ id: (tables.value[tableIndex].fields?.length || 0) + 1, name: 'someField', nullable: false, unique: false, increment: false, comment: null });
 };
 
-const updateField = (data: any) => {
-  console.log('updateField', data);
+const updateField = ({ table, id, name }: { table: number, id: number, name: string }) => {
+  const tableIndex = tables.value.findIndex(t => t.id === table);
+  const field = tables.value[tableIndex].fields.find(f => f.id === id);
+  if(!field) throw new Error('не найдено поле');
+  field.name = name
+   // TODO ломается связь
 };
 
 const updateRelation = (data: Relation) => {
@@ -243,12 +246,20 @@ const addRelation = (data: Relation) => {
 };
 
 const addTable = () => {
+  const lastTableCoords = {
+    xAxis: 10,
+    yAxis: 25,
+  }
+  console.log('tables.value.length, ', tables.value.length)
+  if(tables.value.length){
+    const lastTable = tables.value.at(-1)
+    lastTableCoords.xAxis = lastTable.xAxis + 100
+    lastTableCoords.yAxis = lastTable.yAxis + 100
+  }
   tables.value.push({
     id: (tables.value.length || 0) + 1,
     name: `New Table ${(tables.value.length || 0) + 1}`,
     comment: 'Это очень важная таблица, она нужна для существования таблицы ради таблицы',
-    xAxis: 10,
-    yAxis: 25,
     relations: [],
     fields: [
       {
@@ -260,6 +271,7 @@ const addTable = () => {
         comment: null,
       },
     ],
+    ...lastTableCoords
   });
 };
 </script>

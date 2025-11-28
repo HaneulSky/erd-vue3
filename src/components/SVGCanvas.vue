@@ -30,7 +30,7 @@
       @mouseup="endPan"
       @mouseleave="endPan"
     >
-      <!-- Паттерн с трансформацией с точками -->
+      <!-- Паттерн с трансформацией с точками для фона -->
       <pattern
         id="bg-pattern"
         patternUnits="userSpaceOnUse"
@@ -45,6 +45,16 @@
           fill="#dadada"
         />
       </pattern>
+
+      <!-- Фоновая заливка -->
+      <rect
+        :x="viewBox.x - 1000"
+        :y="viewBox.y - 1000"
+        :width="viewBox.width + 1000"
+        :height="viewBox.height + 1000"
+        fill="url(#bg-pattern)"
+        pointer-events="none"
+      />
 
       <defs>
         <!-- Маркер для "Многие" (M) справа -->
@@ -64,6 +74,7 @@
             stroke-width="1.5"
           />
         </marker>
+
         <!-- Маркер для "Многие" (M) слева -->
         <marker
           id="arrowhead-many-left"
@@ -82,6 +93,7 @@
             transform="rotate(180 9 8.5)"
           />
         </marker>
+
         <!-- Маркер для "Один" (O) -->
         <marker
           id="crossbar-one"
@@ -101,15 +113,7 @@
         </marker>
       </defs>
 
-      <!-- Фоновая заливка -->
-      <rect
-        :x="viewBox.x - 1000"
-        :y="viewBox.y - 1000"
-        :width="viewBox.width + 1000"
-        :height="viewBox.height + 1000"
-        fill="url(#bg-pattern)"
-        pointer-events="none"
-      />
+      <!-- Связи -->
       <g class="connections">
         <path
           v-for="relation in relationsData"
@@ -371,8 +375,8 @@ const handleWheel = (event: WheelEvent) => {
     viewBox.value.width = newWidth;
     viewBox.value.height = newHeight;
     scale.value = newScale;
-    localStorage.setItem(`${props.localStorageName}-erd-scale`, scale.value.toString());
-    localStorage.setItem(`${props.localStorageName}-erd-viewBox`, JSON.stringify(viewBox.value));
+    localStorage.setItem(`${props.localStorageName}-scale`, scale.value.toString());
+    localStorage.setItem(`${props.localStorageName}-viewBox`, JSON.stringify(viewBox.value));
   }
 };
 
@@ -390,8 +394,8 @@ const onScaleButton = (type: 'plus' | 'minus') => {
     viewBox.value.width = newWidth;
     viewBox.value.height = newHeight;
     scale.value = newScale;
-    localStorage.setItem(`${props.localStorageName}-erd-scale`, scale.value.toString());
-    localStorage.setItem(`${props.localStorageName}-erd-viewBox`, JSON.stringify(viewBox.value));
+    localStorage.setItem(`${props.localStorageName}-scale`, scale.value.toString());
+    localStorage.setItem(`${props.localStorageName}-viewBox`, JSON.stringify(viewBox.value));
   }
 };
 
@@ -409,7 +413,7 @@ const handleMouseMove = (event: MouseEvent) => {
     const dy = (event.clientY - panning.value.startY) / scale.value;
     viewBox.value.x = panning.value.startViewBoxX - dx;
     viewBox.value.y = panning.value.startViewBoxY - dy;
-    localStorage.setItem(`${props.localStorageName}-erd-viewBox`, JSON.stringify(viewBox.value));
+    localStorage.setItem(`${props.localStorageName}-viewBox`, JSON.stringify(viewBox.value));
   }
 };
 
@@ -434,8 +438,8 @@ const svgCanvasBlock = ref<HTMLElement | null>(null);
 const svgCanvas = ref<SVGSVGElement | null>(null);
 
 onMounted(() => {
-  const savedScale = localStorage.getItem(`${props.localStorageName}-erd-scale`);
-  const savedViewBox = localStorage.getItem(`${props.localStorageName}-erd-viewBox`);
+  const savedScale = localStorage.getItem(`${props.localStorageName}-scale`);
+  const savedViewBox = localStorage.getItem(`${props.localStorageName}-viewBox`);
   if (savedViewBox) viewBox.value = JSON.parse(savedViewBox);
   if (savedScale && !isNaN(Number(savedScale))) scale.value = Math.min(maxScale.value, Math.max(minScale.value, Number(savedScale)));
   if (svgCanvasBlock.value) {
@@ -445,7 +449,7 @@ onMounted(() => {
       originalSizes.value.height = rect.height;
       viewBox.value.width = rect.width / scale.value;
       viewBox.value.height = rect.height / scale.value;
-      localStorage.setItem(`${props.localStorageName}-erd-viewBox`, JSON.stringify(viewBox.value));
+      localStorage.setItem(`${props.localStorageName}-viewBox`, JSON.stringify(viewBox.value));
     });
     observer.value.observe(svgCanvasBlock.value);
   }

@@ -26,6 +26,7 @@
         @update:table="$emit('update:table', $event)"
         @delete:table="$emit('delete:table', $event)"
         @create:field="$emit('create:field', $event)"
+        @update:field="$emit('update:field', $event)"
       />
       <RelationTab
         v-show="currentTab === 1"
@@ -48,7 +49,7 @@ import type { Entity, Datatype, Relation } from '../models/Table.model'
 const props = defineProps<{
   tables: Entity[];
   relations: Relation[];
-  editTableId: string | number;
+  editTableId: string | number | null;
   datatypes: Datatype[];
 }>();
 
@@ -57,6 +58,7 @@ const emit = defineEmits<{
   (e: 'update:table', value: Entity): void;
   (e: 'delete:table', value: { table: string | number }): void;
   (e: 'create:field', value: { table: string | number }): void;
+  (e: 'update:field', value: { table: string | number, id: number, name: string }): void;
   (e: 'create:relation', value: Relation): void;
   (e: 'update:relation', value: Relation): void;
   (e: 'delete:relation', value: { relation: string | number }): void;

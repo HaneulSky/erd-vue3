@@ -4,7 +4,7 @@
       <span>Имя:</span>
       <input
         :value="table.name"
-        @input="$emit('update:table', { id: table.id, name: $event.target.value })"
+        @input="$emit('update:table', { id: table.id, name: $event.target?.value })"
       >
     </div>
     <div
@@ -14,7 +14,7 @@
     >
       <input
         :value="field.name"
-        @input="$emit('edit:field', { table: table.id, fieldId: field.id, fieldName: $event.target.value })"
+        @input="$emit('update:field', { table: table.id, id: field.id, name: $event.target?.value })"
       >
       <span>
         {{ field.type }} 
@@ -25,7 +25,7 @@
         <summary>Комментарий</summary>
         <textarea
           :value="table.comment"
-          @blur="$emit('update:table', { id: table.id, comment: $event.target.value })"
+          @blur="$emit('update:table', { id: table.id, comment: $event.target?.value })"
         />
       </details>
     </div>
@@ -51,7 +51,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'create:field', value: { table: string | number }): void;
-  (e: 'edit:field', value: { table: string | number, fieldId: number, fieldName: string }): void;
+  (e: 'update:field', value: { table: string | number, id: number, name: string }): void;
   (e: 'update:table', value: Partial<Entity>): void;
   (e: 'delete:table', value: { table: string | number }): void;
 }>();

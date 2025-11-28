@@ -13,11 +13,11 @@
       </button>
     </div>
     <div
-      v-if="tableData[fieldsName]"
+      v-if="tableData[props.fieldsName]"
       class="table-block-data"
     >
       <div
-        v-for="field in tableData[fieldsName]"
+        v-for="field in tableData[props.fieldsName]"
         :key="field.id"
         class="table-block-data-field table-block-row"
       >
@@ -38,6 +38,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'mousedown', event: MouseEvent): void;
+  // TODO переименовать эмит
   (e: 'edit:table', id: string | number): void;
 }>();
 </script>
