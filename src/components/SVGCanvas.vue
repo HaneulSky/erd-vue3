@@ -74,7 +74,6 @@
             stroke-width="1.5"
           />
         </marker>
-
         <!-- Маркер для "Многие" (M) слева -->
         <marker
           id="arrowhead-many-left"
@@ -93,7 +92,6 @@
             transform="rotate(180 9 8.5)"
           />
         </marker>
-
         <!-- Маркер для "Один" (O) -->
         <marker
           id="crossbar-one"
@@ -143,7 +141,7 @@
           :fields-name="props.fieldsName"
           @mousedown.native.stop="handleTableMouseDown(table, $event)"
           @edit:table="$emit('edit:table', $event)"
-          @edit:field="$emit('edit:field', $event)"
+          @update:field="$emit('update:field', $event)"
         />
       </foreignObject>
     </svg>
@@ -189,7 +187,7 @@ const emit = defineEmits<{
   (e: 'edit:table', id: string | number): void;
   (e: 'update:table', value: Entity): void;
   (e: 'edit:relation', id: string | number): void;
-  (e: 'edit:field', value: any): void;
+  (e: 'update:field', value: any): void;
 }>();
 
 const scale = ref<number>(1);
@@ -227,32 +225,52 @@ watch(() => props.relations, () => {
 const getBlockHeight = (table: Entity): number => {
   const headerHeight = 40;
   const fieldHeight = 40;
+  const border = 4;
   const fieldsCount = table.fields?.length || 0;
-  return headerHeight + fieldsCount * fieldHeight;
+  return headerHeight + fieldsCount * fieldHeight + border;
 };
 
-const getTablesByRelations = (relation: Relation): { sourceTable: Entity | undefined; targetTable: Table | undefined } => {
+const getTablesByRelations = (relation: Relation): { sourceTable: Entity | undefined; targetTable: Entity | undefined } => {
   const sourceTable = props.tables.find((t) => t.id === relation.source?.id);
   const targetTable = props.tables.find((t) => t.id === relation.target?.id);
   return { sourceTable, targetTable };
 };
 
 const getMarkerStart = (relation: Relation): string => {
-  const datatype = relation.datatype?.name;
-  if (datatype === 'OtO' || datatype === 'MtO') return 'url(#crossbar-one)';
-  if (datatype === 'MtM' || datatype === 'OtM') return 'url(#arrowhead-many-left)';
-  return '';
-};
+      const { sourceTable, targetTable} = getTablesByRelations(relation);
+      if (!sourceTable || !targetTable) return '';
+      const isSourceAbove = sourceTable.yAxis > targetTable.yAxis;
+      const isSameXAxis = Math.abs(sourceTable.xAxis - targetTable.xAxis) <= tableWidth.value;
+
+      const relationType = relation.datatype?.name;
+      let marker = 'url(#crossbar-one)';
+      
+      if (relationType === 'MtM') marker = 'url(#arrowhead-many-left)';
+      if (relationType === 'MtO') marker = isSourceAbove && isSameXAxis ? 'url(#crossbar-one)' : 'url(#arrowhead-many-left)';
+      if (relationType === 'OtM') marker = isSourceAbove && isSameXAxis ? 'url(#arrowhead-many-left)' : 'url(#crossbar-one)';
+      
+      return marker;
+}
 
 const getMarkerEnd = (relation: Relation): string => {
-  const datatype = relation.datatype?.name;
-  if (datatype === 'OtO' || datatype === 'OtM') return 'url(#crossbar-one)';
-  if (datatype === 'MtM' || datatype === 'MtO') return 'url(#arrowhead-many)';
-  return '';
-};
+      const { sourceTable, targetTable} = getTablesByRelations(relation);
+      if (!sourceTable || !targetTable) return '';
+      const visualTableWidth = tableWidth;
+      const sourceVisualCenter = sourceTable.xAxis + visualTableWidth / 2;
+      const targetVisualCenter = targetTable.xAxis + visualTableWidth / 2;
+      const isSourceLeft = sourceVisualCenter < targetVisualCenter;
+      const isSourceAbove = sourceTable.yAxis > targetTable.yAxis;
+      const isSameXAxis = Math.abs(sourceTable.xAxis - targetTable.xAxis) <= tableWidth.value;
+      const relationType = relation.datatype?.name;
+      let marker = 'url(#crossbar-one)';
+      if (relationType === 'MtM') marker = isSourceLeft ? 'url(#arrowhead-many)' : 'url(#arrowhead-many-left)';
+      if (relationType === 'MtO') marker = (isSourceAbove && !isSameXAxis) || !isSourceAbove ? 'url(#crossbar-one)' : 'url(#arrowhead-many-left)';
+      if (relationType === 'OtM') marker = (isSourceAbove && !isSameXAxis) || !isSourceAbove ? 'url(#arrowhead-many-left)' : 'url(#crossbar-one)';
+     
+      return marker;
+}
 
 const getConnectionPoint = (table: Entity, side: string, relation: Relation, isSource: boolean): { x: number; y: number } => {
-  const visualTableWidth = tableWidth.value;
   const visualHeaderHeight = 40;
   const fieldHeight = 40;
   const baseX = table.xAxis || 1;
@@ -271,34 +289,36 @@ const getConnectionPoint = (table: Entity, side: string, relation: Relation, isS
     case 'left':
       return { x: baseX - offset, y: yPosition };
     case 'right':
-      return { x: baseX + visualTableWidth + offset, y: yPosition };
+      return { x: baseX + tableWidth.value + offset, y: yPosition };
     default:
-      return { x: baseX + visualTableWidth / 2, y: yPosition };
+      return { x: baseX + tableWidth.value / 2, y: yPosition };
   }
 };
 
 const getConnectionPath = (relation: Relation): string => {
   const { sourceTable, targetTable } = getTablesByRelations(relation);
   if (!sourceTable || !targetTable) return '';
-  const visualTableWidth = tableWidth.value;
-  const isSameXAxis = Math.abs(sourceTable.xAxis! - targetTable.xAxis!) <= visualTableWidth;
+
+  const isSameXAxis = Math.abs(sourceTable.xAxis! - targetTable.xAxis!) <= tableWidth.value;
   const isSourceAbove = sourceTable.yAxis! < targetTable.yAxis!;
-  const sourceVisualCenterX = sourceTable.xAxis! + visualTableWidth / 2;
-  const targetVisualCenterX = targetTable.xAxis! + visualTableWidth / 2;
+  const sourceVisualCenterX = sourceTable.xAxis! + tableWidth.value / 2;
+  const targetVisualCenterX = targetTable.xAxis! + tableWidth.value / 2;
   const isSourceLeft = sourceVisualCenterX < targetVisualCenterX;
   const baseRadius = 5;
+  const markerSize = 15;
 
   if (isSameXAxis) {
-    const side = isSourceAbove ? 'right' : 'right';
-    const offset = 35;
+    const side = 'right';
+    const offset = 40;
     const topTable = isSourceAbove ? sourceTable : targetTable;
     const bottomTable = isSourceAbove ? targetTable : sourceTable;
     const topPoint = getConnectionPoint(topTable, side, relation, topTable.id === relation.source?.id);
     const bottomPoint = getConnectionPoint(bottomTable, side, relation, bottomTable.id === relation.source?.id);
-    const midX = Math.max(topTable.xAxis! + visualTableWidth, bottomTable.xAxis! + visualTableWidth) + offset;
-    if (relation.datatype?.name === 'OtO' || (relation.datatype?.name === 'MtO' && !isSourceAbove) || (relation.datatype?.name === 'OtM' && isSourceAbove)) topPoint.x += 15;
+    const midX = Math.max(topTable.xAxis! + tableWidth.value, bottomTable.xAxis! + tableWidth.value) + offset;
+    if (relation.datatype?.name === 'OtO' || (relation.datatype?.name === 'MtO' && !isSourceAbove) || (relation.datatype?.name === 'OtM' && isSourceAbove)) topPoint.x += markerSize;
     const yDistance = Math.abs(bottomTable.yAxis! - topPoint.y);
     const radius = Math.min(baseRadius, yDistance / 2);
+    console.log('here', {rel: relation.id})
     const path = `
       M ${topPoint.x},${topPoint.y}
       L ${midX - radius},${topPoint.y}
@@ -314,8 +334,9 @@ const getConnectionPath = (relation: Relation): string => {
   const end = getConnectionPoint(targetTable, targetSide, relation, false);
   const midX = (start.x + end.x) / 2;
 
-  if ((relation.datatype?.name === 'OtO' || relation.datatype?.name === 'OtM') && targetSide === 'left') start.x += 15;
-  if ((relation.datatype?.name === 'OtO' || relation.datatype?.name === 'OtM') && targetSide === 'right') start.x -= 15;
+  if ((relation.datatype?.name === 'OtO' || relation.datatype?.name === 'OtM') && targetSide === 'left') start.x += markerSize;
+  if ((relation.datatype?.name === 'OtO' || relation.datatype?.name === 'OtM') && targetSide === 'right') start.x -= markerSize;
+
   if (start.y === end.y) {
     return `
       M ${start.x},${start.y}

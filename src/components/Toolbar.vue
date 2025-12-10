@@ -81,6 +81,7 @@ const openTab = (tabName: string) => {
 </script>
 <style scoped>
 .erd-toolbar {
+  background-color: rgb(242, 226, 250, 0.3);
   border: 1px solid #dadada;
   width: 100%;
   height: 100%;
