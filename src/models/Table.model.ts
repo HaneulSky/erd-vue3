@@ -18,17 +18,6 @@ export interface Field {
     datatype?: Datatype;
 }
 
-
-// export interface Entity {
-//     id: number
-//     name: string
-//     rusName?: string
-//     fields: Field[]
-//     xAxis?: number;
-//     yAxis?: number;
-//     comment?: string;
-// }
-
 export type Entity<T extends string = "fields"> = {
     id: number
     name: string
@@ -40,12 +29,12 @@ export type Entity<T extends string = "fields"> = {
 
 export interface Relation {
   id: string | number;
-  source?: Entity;
-  target?: Entity;
-  datatype?: Datatype;
-  sourceField?: Field;
-  targetField?: Field;
-  type?: string | null;
-  from?: string | null;
-  to?: string | null;
+  source: Entity;
+  target: Entity;
+  datatype: Datatype;
+  sourceField: Field;
+  targetField: Field;
+  type: string | null;
+  from: string | null;
+  to: string | null;
 }

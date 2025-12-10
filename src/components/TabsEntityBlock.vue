@@ -3,6 +3,7 @@
     <div class="table-block-head">
       <span>Имя:</span>
       <input
+        class="table-block-field"
         :value="table.name"
         @input="$emit('update:table', { id: table.id, name: $event.target?.value })"
       >
@@ -96,13 +97,13 @@ details {
   width: 40px;
 }
 
-.table-block-head input {
+/* .table-block-head input {
   outline: none;
   border: none;
   border-bottom: 1px solid #494949;
   transition: border-bottom .2px ease;
   width: 100%;
-}
+} */
 
 .table-block-head input:focus {
   border-bottom:  1px solid #3f496a;
