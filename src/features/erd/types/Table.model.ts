@@ -1,5 +1,12 @@
 export type RelationType = 'OtO' | 'OtM' | 'MtO' | 'MtM'
 
+export enum RelationToRelation {
+  'OtO' = 'OtO',
+  'OtM' = 'MtO',
+  'MtO' = 'OtM',
+  'MtM' = 'MtM'
+}
+
 type OneFieldArray<T extends string = "fields"> = {
   [K in T]: Field[];
 };

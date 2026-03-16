@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import ERDDiagramm from './components/ERDDiagramm.vue';
+import ERDDiagramm from '@/features/erd/components/ERDDiagramm.vue';
 
 interface Datatype {
   id: number;
@@ -41,7 +41,7 @@ interface Table {
   comment: string;
   xAxis: number;
   yAxis: number;
-  relations: any[];
+  relations: unknown[];
   fields: Field[];
 }
 
@@ -231,7 +231,6 @@ const datatypes = ref<Datatype[]>([
 ]);
 
 const updateTable = (table: Table) => {
-  console.log(table);
   const tableIndex = tables.value.findIndex(t => t.id === table.id);
   tables.value[tableIndex] = { ...tables.value[tableIndex], ...table };
   console.log(tables.value);
@@ -250,9 +249,21 @@ const deleteTable = ({ table }: { table: number }) => {
   tables.value.splice(tableIndex, 1);
 };
 
-const createField = ({ table }: { table: number }) => {
+const getDatatypeByName = (name: string): Datatype | undefined => {
+    return datatypes.value.find(dt => dt.name === name)
+}
+
+const checkField = (name: string, fieldsArr: Field[]) => {
+  return fieldsArr.find(fd => fd.name === name)
+}
+
+const createField = ({ table, name, datatype }: { table: number, name: string, datatype: string }) => {
   const tableIndex = tables.value.findIndex(t => t.id === table);
-  tables.value[tableIndex].fields.push({ id: (tables.value[tableIndex].fields?.length || 0) + 1, name: 'someField', nullable: false, unique: false, increment: false, comment: null });
+  const fieldsArr = tables.value[tableIndex].fields;
+  const hasField = checkField(name, fieldsArr)
+  if(hasField) throw new Error('Такое поле в этой сущности уже существует');
+ fieldsArr.push({ id: (tables.value[tableIndex].fields?.length || 0) + 1, name: name ||'someField', datatype: getDatatypeByName(datatype), nullable: false, unique: false, increment: false, comment: null });
+  console.log('create field', tables.value)
 };
 
 const updateField = ({ table, id, name }: { table: number, id: number, name: string }) => {
@@ -260,7 +271,6 @@ const updateField = ({ table, id, name }: { table: number, id: number, name: str
   const field = tables.value[tableIndex].fields.find(f => f.id === id);
   if(!field) throw new Error('не найдено поле');
   field.name = name
-   // TODO ломается связь
 };
 
 const updateRelation = (data: Relation) => {
@@ -268,7 +278,10 @@ const updateRelation = (data: Relation) => {
 };
 
 const addRelation = (data: Relation) => {
-  console.log('addRelation', data);
+  relations.value.push({
+    id: data.id,
+    datatype: data.datatype
+  })
 };
 
 const addTable = () => {
@@ -276,7 +289,6 @@ const addTable = () => {
     xAxis: 10,
     yAxis: 25,
   }
-  console.log('tables.value.length, ', tables.value.length)
   if(tables.value.length){
     const lastTable = tables.value.at(-1)
     lastTableCoords.xAxis = lastTable.xAxis + 100

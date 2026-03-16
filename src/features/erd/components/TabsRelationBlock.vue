@@ -9,6 +9,7 @@
         id="from-select"
         v-model="localValue.source"
         name="tableFrom"
+        @change="createFields"
       >
         <option
           value=""
@@ -27,7 +28,9 @@
       <select
         id="to-select"
         v-model="localValue.target"
-        name="tableTo">
+        name="tableTo"
+        @change="createFields"
+      >
         <option value="">
           -- Выберите таблицу --
         </option>
@@ -45,6 +48,7 @@
         id="relation-types-select"
         v-model="localValue.datatype"
         name="relationType"
+        @change="createFields"
       >
         <option value="">-- Выберите тип --</option>
         <option
@@ -100,7 +104,8 @@
 </template>
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
-import type { Entity, Datatype, Relation } from '../models/Table.model'
+import { RelationToRelation } from '@/features/erd/types/Table.model'
+import type { Entity, Datatype, Relation } from '@/features/erd/types/Table.model'
 
 
 const props = defineProps<{
@@ -112,6 +117,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'update:relation', value: Relation): void;
   (e: 'delete:relation', value: { relation: string | number }): void;
+  (e: 'create:field', value: {table: string| number, name: string, datatype: string}): void;
 }>();
 
 const localValue = ref<Relation>({});
@@ -119,6 +125,15 @@ const localValue = ref<Relation>({});
 const relationName = computed(() => {
   return `${localValue.value.source?.name || '(from)'} (${localValue.value.datatype?.name || 'type'}) ${localValue.value.target?.name || '(to)'}`;
 });
+
+const createFields = () => {
+  if(!localValue.value.source || !localValue.value.target || !localValue.value.datatype) return;
+  const targetFieldName = localValue.value.target.name || 'noname';
+  const sourceFieldName = localValue.value.source.name || 'noname';
+  const datatypeName = localValue.value.datatype.name;
+  emit('create:field', {table: localValue.value.source.id, name: targetFieldName.toLowerCase(), datatype: datatypeName})
+  emit('create:field', {table: localValue.value.target.id, name: sourceFieldName.toLowerCase(), datatype: RelationToRelation[datatypeName]})
+}
 
 watch(() => props.relation, (value) => {
   localValue.value = value;
@@ -149,8 +164,8 @@ watch(localValue, (value) => {
 }
 
 .relation-block-two-cols {
-  display: grid;
-  grid-template-columns: 50% 50%;
+  display: flex;
   gap: 10px;
+  flex-wrap: wrap;
 }
 </style>
