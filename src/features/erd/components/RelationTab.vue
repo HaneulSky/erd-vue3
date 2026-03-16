@@ -2,12 +2,12 @@
   <div class="relations-tab-container">
     <div class="relations-tab-head">
       <!-- TODO здесь селект -->
-      <input
+       <ERDInput 
         v-model="search"
         type="search"
         placeholder="Поиск"
         class="relations-search-input"
-      >
+       />
       <button
         class="add-relation-btn"
         @click="addNewRelation">
@@ -30,15 +30,17 @@
           :datatypes="datatypes"
           @update:relation="$emit('update:relation', $event)"
           @delete:relation="$emit('delete:relation', $event)"
+          @create:field="$emit('create:field', $event)"
         />
       </details>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, computed } from 'vue';
 import TabsRelationBlock from './TabsRelationBlock.vue';
-import type { Entity, Datatype, Relation } from '../models/Table.model'
+import type { Entity, Datatype, Relation } from '@/features/erd/types/Table.model'
+import ERDInput from '@/shared/ui/ERDInput.vue';
 
 const props = defineProps<{
   relations: Relation[];
@@ -48,24 +50,28 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: 'update:relation', value: Relation): void;
+  (e: 'update:relation' | 'create:relation', value: Relation): void;
+  (e: 'create:relation', value: Pick<Relation, 'id' | 'datatype'>): void;
   (e: 'delete:relation', value: { relation: string | number }): void;
+  (e: 'create:field', value: {table: string| number, name: string, datatype: string}): void;
 }>();
 
 const search = ref<string | null>(null);
-const localValue = ref<Relation[]>([]);
 
-watch(() => props.relations, () => {
-  localValue.value = props.relations;
-}, { immediate: true, deep: true });
+const localValue = computed(() => {
+  if(search.value) return props.relations.filter(rel => 
+    rel.source?.name?.toLowerCase().includes(search.value) || 
+    rel.target?.name?.toLowerCase().includes(search.value) ||
+    rel.datatype?.name?.toLowerCase().includes(search.value)
+  )
+  return props.relations
+})
 
 const addNewRelation = () => {
-  localValue.value.push({
+  emit('create:relation', {
     id: `new-${localValue.value.length + 1}`,
-    type: null,
-    from: null,
-    to: null
-  });
+    datatype: props.datatypes[0] || {id: 1, name: 'OtO'},
+  })
 };
 </script>
 <style scoped>

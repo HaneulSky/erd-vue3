@@ -6,8 +6,9 @@
       :edit-table-id="editableTableId"
       :datatypes="datatypes"
       @edit:table="$emit('edit-table', $event)"
-      @edit:relation="$emit('edit-relation', $event)"
+      @update:relation="$emit('update:relation', $event)"
       @delete:relation="$emit('delete:relation', $event)"
+      @create:relation="$emit('create:relation', $event)"
       @create:table="$emit('create:table')"
       @update:table="$emit('update:table', $event)"
       @delete:table="$emit('delete:table', $event)"
@@ -27,9 +28,9 @@
 </template>
 <script setup lang="ts">
 import { ref } from 'vue';
-import Toolbar from './Toolbar.vue';
+import Toolbar from './ERDToolbar.vue';
 import SVGCanvas from './SVGCanvas.vue';
-import type { Entity, Relation, Datatype } from '../models/Table.model'
+import type { Entity, Relation, Datatype } from '@/features/erd/types/Table.model'
 
 interface Props {
   relations: Relation[]
@@ -44,16 +45,17 @@ const props = withDefaults(defineProps<Props>(), {
   localStorageName: 'my-erd'
 })
 
-const emit = defineEmits<{
+defineEmits<{
   (e: 'edit-table', id: string | number): void;
-  (e: 'edit-relation', id: string | number): void;
+  (e: 'update:relation', id: string | number): void;
+  (e: 'create:relation', value: Pick<Relation, 'id' | 'datatype'>): void;
   (e: 'delete:relation', value: { relation: string | number }): void;
   (e: 'create:table'): void;
   (e: 'update:table', value: Entity): void;
   (e: 'delete:table', value: { table: string | number }): void;
-  (e: 'create:field', value: { table: string | number }): void;
+  (e: 'create:field', value: { table: string | number, name: string, datatype: string }): void;
   (e: 'update:field', value: { table: string | number, id: number, name: string }): void;
-  (e: 'drag-table', value: any): void;
+  (e: 'drag-table', value: unknown): void;
 }>();
 
 const editableTableId = ref<string | number | null>(null);

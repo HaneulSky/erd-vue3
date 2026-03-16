@@ -9,7 +9,7 @@
       >
     </div>
     <div
-      v-for="field in table.fields"
+      v-for="field in props.table.fields"
       :key="field.id"
       class="table-block-field"
     >
@@ -25,7 +25,7 @@
       <details class="comment-collapse">
         <summary>Комментарий</summary>
         <textarea
-          :value="table.comment"
+          :value="props.table.comment"
           @blur="$emit('update:table', { id: table.id, comment: $event.target?.value })"
         />
       </details>
@@ -43,14 +43,13 @@
   </div>
 </template>
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
-import type { Entity } from '../models/Table.model'
+import type { Entity } from '@/features/erd/types/Table.model'
 
 const props = defineProps<{
   table: Entity;
 }>();
 
-const emit = defineEmits<{
+defineEmits<{
   (e: 'create:field', value: { table: string | number }): void;
   (e: 'update:field', value: { table: string | number, id: number, name: string }): void;
   (e: 'update:table', value: Partial<Entity>): void;

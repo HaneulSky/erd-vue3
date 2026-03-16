@@ -2,21 +2,14 @@
   <div class="tables-tab-container">
     <div class="tables-tab-head">
       <form class="select-wrapper">
-        <select
-          v-model="search"
+        <ERDSelect 
+         v-model="search"
           :disabled="!tables.length"
           name="entity"
-          id="entity-select"
+          select-id="entity-select"
           class="tables-search-input"
-        >
-          <option
-            v-for="entity in tables"
-            :key="entity.id"
-            :value="entity.id"
-          >
-            {{ entity.name || "(noname)" }}
-          </option>
-        </select>
+          :list="tables"
+        />
 
         <button
           v-if="search !== null"
@@ -58,8 +51,10 @@
 </template>
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import type { Entity, Datatype } from '@/features/erd/types/Table.model'
+
 import TabsEntityBlock from './TabsEntityBlock.vue';
-import type { Entity, Datatype } from '../models/Table.model'
+import ERDSelect from '@/shared/ui/ERDSelect.vue';
 
 const props = defineProps<{
   tables: Entity[];
@@ -67,7 +62,7 @@ const props = defineProps<{
   datatypes: Datatype[];
 }>();
 
-const emit = defineEmits<{
+defineEmits<{
   (e: 'create:table'): void;
   (e: 'create:field', value: { table: string | number }): void;
   (e: 'update:field', value: { table: string | number, id: number, name: string }): void;

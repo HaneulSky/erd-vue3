@@ -13,11 +13,11 @@
       </button>
     </div>
     <div
-      v-if="tableData[props.fieldsName]"
+      v-if="props.tableData[props.fieldsName]"
       class="table-block-data"
     >
       <div
-        v-for="field in tableData[props.fieldsName]"
+        v-for="field in props.tableData[props.fieldsName]"
         :key="field.id"
         class="table-block-data-field table-block-row"
       >
@@ -28,17 +28,15 @@
   </div>
 </template>
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
-import type { Entity } from '../models/Table.model'
+import type { Entity } from '@/features/erd/types/Table.model'
 
 const props = defineProps<{
   tableData: Entity;
   fieldsName: string;
 }>();
 
-const emit = defineEmits<{
+defineEmits<{
   (e: 'mousedown', event: MouseEvent): void;
-  // TODO переименовать эмит
   (e: 'edit:table', id: string | number): void;
 }>();
 </script>

@@ -36,15 +36,16 @@
         @create:relation="$emit('create:relation', $event)"
         @update:relation="$emit('update:relation', $event)"
         @delete:relation="$emit('delete:relation', $event)"
+        @create:field="$emit('create:field', $event)"
       />
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import EntityTab from './EntityTab.vue';
 import RelationTab from './RelationTab.vue';
-import type { Entity, Datatype, Relation } from '../models/Table.model'
+import type { Entity, Datatype, Relation } from '@/features/erd/types/Table.model'
 
 const props = defineProps<{
   tables: Entity[];
@@ -53,13 +54,13 @@ const props = defineProps<{
   datatypes: Datatype[];
 }>();
 
-const emit = defineEmits<{
+defineEmits<{
   (e: 'create:table'): void;
   (e: 'update:table', value: Entity): void;
   (e: 'delete:table', value: { table: string | number }): void;
-  (e: 'create:field', value: { table: string | number }): void;
+  (e: 'create:field', value: { table: string | number, name: string, datatype: string }): void;
   (e: 'update:field', value: { table: string | number, id: number, name: string }): void;
-  (e: 'create:relation', value: Relation): void;
+  (e: 'create:relation', value: Pick<Relation, 'id' | 'datatype'>): void;
   (e: 'update:relation', value: Relation): void;
   (e: 'delete:relation', value: { relation: string | number }): void;
 }>();
@@ -78,6 +79,8 @@ const openTab = (tabName: string) => {
   if (tabName === 'tables') currentTab.value = 0;
   if (tabName === 'relations') currentTab.value = 1;
 };
+
+watch(() => props.editTableId, () => currentTab.value = 0, {immediate: true})
 </script>
 <style scoped>
 .erd-toolbar {
