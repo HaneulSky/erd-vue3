@@ -1,71 +1,104 @@
 <template>
   <div class="erd-container">
-    <Toolbar 
+    <Toolbar
       :tables="tables"
-      :relations="relations" 
+      :relations="relations"
       :edit-table-id="editableTableId"
+      :edit-relation-id="editableRelationId"
       :datatypes="datatypes"
-      @edit:table="$emit('edit-table', $event)"
-      @update:relation="$emit('update:relation', $event)"
-      @delete:relation="$emit('delete:relation', $event)"
-      @create:relation="$emit('create:relation', $event)"
-      @create:table="$emit('create:table')"
-      @update:table="$emit('update:table', $event)"
-      @delete:table="$emit('delete:table', $event)"
-      @create:field="$emit('create:field', $event)"
-      @update:field="$emit('update:field', $event)"
+      @edit:table="onEditTable"
+      @update:relation="onUpdateRelation"
+      @delete:relation="onDeleteRelation"
+      @create:relation="onCreateRelation"
+      @create:table="onCreateTable"
+      @update:table="onUpdateTable"
+      @delete:table="onDeleteTable"
+      @create:field="onCreateField"
+      @update:field="onUpdateField"
     />
-    <SVGCanvas 
+    <SVGCanvas
       :tables="props.tables"
       :relations="props.relations"
       :fields-name="props.fieldsName"
       :local-storage-name="props.localStorageName"
-      @drag-table="$emit('drag-table', $event)"
-      @edit:table="editableTableId=$event"
-      @update:table="$emit('update:table', $event)"
+      @drag-table="onDragTable"
+      @edit:table="editableTableId = $event"
+      @edit:relation="editableRelationId = $event"
+      @update:table="onUpdateTable"
     />
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue';
-import Toolbar from './ERDToolbar.vue';
-import SVGCanvas from './SVGCanvas.vue';
-import type { Entity, Relation, Datatype } from '@/features/erd/types/Table.model'
+  import { ref } from 'vue';
+  import Toolbar from './Toolbar/ERDToolbar.vue';
+  import SVGCanvas from './Canvas/SVGCanvas.vue';
+  import type { Entity, Relation, Datatype } from '@/features/erd/types/Table.model';
 
-interface Props {
-  relations: Relation[]
-  datatypes: Datatype[]
-  fieldsName?: string
-  localStorageName?: string
-  tables: Entity[]
-}
+  interface Props {
+    relations: Relation[];
+    datatypes: Datatype[];
+    fieldsName?: string;
+    localStorageName?: string;
+    tables: Entity[];
+  }
 
-const props = withDefaults(defineProps<Props>(), {
-  fieldsName: 'fields',
-  localStorageName: 'my-erd'
-})
+  interface EmitEvents {
+    'edit-table': string | number;
+    'update:relation': Relation;
+    'create:relation': Pick<Relation, 'id' | 'datatype'>;
+    'delete:relation': { relation: string | number };
+    'create:table': void;
+    'update:table': Entity;
+    'delete:table': { table: string | number };
+    'create:field': { table: string | number; name?: string; datatype?: string };
+    'update:field': { table: string | number; id: number; name: string };
+    'drag-table': unknown;
+  }
 
-defineEmits<{
-  (e: 'edit-table', id: string | number): void;
-  (e: 'update:relation', id: string | number): void;
-  (e: 'create:relation', value: Pick<Relation, 'id' | 'datatype'>): void;
-  (e: 'delete:relation', value: { relation: string | number }): void;
-  (e: 'create:table'): void;
-  (e: 'update:table', value: Entity): void;
-  (e: 'delete:table', value: { table: string | number }): void;
-  (e: 'create:field', value: { table: string | number, name: string, datatype: string }): void;
-  (e: 'update:field', value: { table: string | number, id: number, name: string }): void;
-  (e: 'drag-table', value: unknown): void;
-}>();
+  const props = withDefaults(defineProps<Props>(), {
+    fieldsName: 'fields',
+    localStorageName: 'my-erd',
+  });
 
-const editableTableId = ref<string | number | null>(null);
-</script>
+  
+
+  const emit = defineEmits<{
+    (e: 'edit-table', id: EmitEvents['edit-table']): void;
+    (e: 'update:relation', value: EmitEvents['update:relation']): void;
+    (e: 'create:relation', value: EmitEvents['create:relation']): void;
+    (e: 'delete:relation', value: EmitEvents['delete:relation']): void;
+    (e: 'create:table'): void;
+    (e: 'update:table', value: EmitEvents['update:table']): void;
+    (e: 'delete:table', value: EmitEvents['delete:table']): void;
+    (e: 'create:field', value: EmitEvents['create:field']): void;
+    (e: 'update:field', value: EmitEvents['update:field']): void;
+    (e: 'drag-table', value: EmitEvents['drag-table']): void;
+  }>();
+
+  const editableTableId = ref<string | number | null>(null);
+  const editableRelationId = ref<string | number | null>(null);
+
+
+  const onEditTable = (id: EmitEvents['edit-table']) => emit('edit-table', id);
+  const onUpdateRelation = (value: EmitEvents['update:relation']) => emit('update:relation', value);
+  const onDeleteRelation = (value: EmitEvents['delete:relation']) => emit('delete:relation', value);
+  const onCreateRelation = (value: EmitEvents['create:relation']) => emit('create:relation', value);
+  const onCreateTable = () => emit('create:table');
+  const onUpdateTable = (value: EmitEvents['update:table']) => emit('update:table', value);
+  const onDeleteTable = (value: EmitEvents['delete:table']) => emit('delete:table', value);
+  const onCreateField = (value: EmitEvents['create:field']) => 
+    emit('create:field', value);
+  const onUpdateField = (value:EmitEvents['update:field']) => 
+    emit('update:field', value);
+  const onDragTable = (value: unknown) => emit('drag-table', value);
+
+  </script>
 <style scoped>
-.erd-container {
-  height: 100vh;
-  display: grid;
-  grid-template-columns: 25% 75%;
-  width: 100%;
-  overflow: hidden;
-}
+  .erd-container {
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 25% 75%;
+    width: 100%;
+    overflow: hidden;
+  }
 </style>

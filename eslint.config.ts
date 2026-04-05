@@ -1,28 +1,108 @@
-import { globalIgnores } from 'eslint/config'
-import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript'
-import pluginVue from 'eslint-plugin-vue'
-import pluginVitest from '@vitest/eslint-plugin'
-import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
+import js from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import pluginVue from 'eslint-plugin-vue';
+import eslintConfigPrettier from 'eslint-config-prettier';
+import globals from 'globals';
+import vueParser from 'vue-eslint-parser';
 
-// To allow more languages other than `ts` in `.vue` files, uncomment the following lines:
-// import { configureVueProject } from '@vue/eslint-config-typescript'
-// configureVueProject({ scriptLangs: ['ts', 'tsx'] })
-// More info at https://github.com/vuejs/eslint-config-typescript/#advanced-setup
-
-export default defineConfigWithVueTs(
+export default tseslint.config(
   {
-    name: 'app/files-to-lint',
-    files: ['**/*.{ts,mts,tsx,vue}'],
+    ignores: [
+      'node_modules/**',
+      'dist/**',
+      '*.min.js',
+      'coverage/**',
+      '.env*',
+      '*.log',
+      'eslint.config.ts',
+    ],
   },
 
-  globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
-
-  pluginVue.configs['flat/essential'],
-  vueTsConfigs.recommended,
-  
   {
-    ...pluginVitest.configs.recommended,
-    files: ['src/**/__tests__/*'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
+    },
+    rules: {
+      'object-curly-spacing': ['error', 'always'],
+      'array-bracket-spacing': ['error', 'never'],
+      'comma-dangle': ['error', 'always-multiline'],
+      'arrow-spacing': ['error', { before: true, after: true }],
+      'keyword-spacing': ['error', { before: true, after: true }],
+      'space-infix-ops': 'error', // a + b вместо a+b
+      'space-before-function-paren': ['error', 'always'],
+      'space-before-blocks': ['error', 'always'],
+      'no-trailing-spaces': 'error',
+      'eol-last': ['error', 'always'],
+      semi: ['error', 'always'],
+      quotes: ['error', 'single', { avoidEscape: true }],
+    },
   },
-  skipFormatting,
-)
+
+  ...tseslint.configs.recommended,
+  {
+    files: ['**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
+  },
+
+  ...pluginVue.configs['flat/recommended'],
+
+  {
+    files: ['**/*.vue'],
+    languageOptions: {
+      parser: vueParser,
+      parserOptions: {
+        parser: tseslint.parser,
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
+    },
+    rules: {
+      'vue/attributes-order': [
+        'error',
+        {
+          order: [
+            'DEFINITION', 'LIST_RENDERING', 'CONDITIONALS',
+            'GLOBAL', 'UNIQUE', 'OTHER_ATTR', 'EVENTS', 'CONTENT',
+          ],
+        },
+      ],
+      'vue/max-attributes-per-line': [
+        'error',
+        { singleline: { max: 3 }, multiline: { max: 1 } },
+      ],
+      'vue/html-closing-bracket-newline': [
+        'error',
+        { singleline: 'never', multiline: 'always' },
+      ],
+      'vue/html-self-closing': [
+        'error',
+        {
+          html: { void: 'always', normal: 'always', component: 'always' },
+          svg: 'always',
+          math: 'always',
+        },
+      ],
+      'vue/component-name-in-template-casing': ['error', 'PascalCase'],
+      'vue/multi-word-component-names': 'off',
+      'vue/require-v-for-key': 'error',
+
+      'indent': 'off',
+      '@typescript-eslint/indent': ['error', 2],
+
+      'padding-line-between-statements': [
+        'error',
+        { blankLine: 'always', prev: '*', next: 'return' },
+      ],
+    },
+  },
+
+  eslintConfigPrettier
+);

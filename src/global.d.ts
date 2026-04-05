@@ -1,5 +1,7 @@
 declare global {
-  type Nullable<T> = T | null;
+  type Nullable<T> = {
+    [K in keyof T]: T[K] | null;
+  };
 }
 
 export {};

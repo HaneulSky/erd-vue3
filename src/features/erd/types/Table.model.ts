@@ -1,13 +1,13 @@
-export type RelationType = 'OtO' | 'OtM' | 'MtO' | 'MtM'
+export type RelationType = 'OtO' | 'OtM' | 'MtO' | 'MtM';
 
 export enum RelationToRelation {
   'OtO' = 'OtO',
   'OtM' = 'MtO',
   'MtO' = 'OtM',
-  'MtM' = 'MtM'
+  'MtM' = 'MtM',
 }
 
-type OneFieldArray<T extends string = "fields"> = {
+type OneFieldArray<T extends string = 'fields'> = {
   [K in T]: Field[];
 };
 
@@ -17,21 +17,21 @@ export interface Datatype {
 }
 
 export interface Field {
-    id: number
-    name: string
-    rusName?: string
-    type: string
-    relation: RelationType | null
-    datatype?: Datatype;
+  id: number;
+  name: string;
+  rusName?: string;
+  type: string;
+  relation: RelationType | null;
+  datatype?: Datatype;
 }
 
-export type Entity<T extends string = "fields"> = {
-    id: number
-    name: string
-    rusName?: string
-    xAxis?: number;
-    yAxis?: number;
-    comment?: string;
+export type Entity<T extends string = 'fields'> = {
+  id: number;
+  name: string;
+  rusName?: string;
+  xAxis?: number;
+  yAxis?: number;
+  comment?: string;
 } & OneFieldArray<T>;
 
 export interface Relation {

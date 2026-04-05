@@ -1,3 +1,5 @@
+БЕЗ БЭКА! НЕ ЗАПУСТИТСЯ! (ДЕПЛОЙ ПОКА ОЖИДАЕТСЯ)
+
 # erd-vue3
 
 This template should help get you started developing with Vue 3 in Vite.
