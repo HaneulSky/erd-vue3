@@ -1,9 +1,9 @@
 <template>
   <div class="login-page">
     <p>{{ formTitle }}</p>
-    <AuthForm 
-      :is-register="isRegister" 
-      @on-submit="onSubmit" 
+    <AuthForm
+      :is-register="isRegister"
+      @on-submit="onSubmit"
     />
     <ERDButton
       class="change-form-btn"
@@ -23,7 +23,7 @@
   import ERDButton from '@/shared/ui/ERDButton.vue';
   import { useAuthStore } from '@/entities/user/model/useAuthStore';
 
-  const authStore = useAuthStore()
+  const authStore = useAuthStore();
 
   const router = useRouter();
   const route = useRoute();
@@ -33,7 +33,9 @@
   const isRegister = ref(false);
 
   const formTitle = computed(() => (isRegister.value ? 'Регистрация' : 'Вход'));
-  const spanTitle = computed(() => (isRegister.value ? 'Уже зарегистрированы?' : 'Еще не зарегистрированы?'));
+  const spanTitle = computed(() =>
+    isRegister.value ? 'Уже зарегистрированы?' : 'Еще не зарегистрированы?'
+  );
 
   const catchError = (e: unknown) => {
     if (e instanceof ApiError) {
@@ -66,22 +68,22 @@
   };
 
   const onSubmit = async (data: LoginDto | RegisterDto) => {
-      try {
-        if (isRegister.value) {
-          await register(data)
-        } else {
-          await login(data)
-        }
-
-        await authStore.fetchUser()
-
-        router.push({ 
-          name: 'diagrams',
-          query: route.query.redirect ? { redirect: route.query.redirect } : {}
-        });
-      } catch (e) {
-        console.error('Request failed:', e)
+    try {
+      if (isRegister.value) {
+        await register(data);
+      } else {
+        await login(data);
       }
+
+      await authStore.fetchUser();
+
+      router.push({
+        name: 'diagrams',
+        query: route.query.redirect ? { redirect: route.query.redirect } : {},
+      });
+    } catch (e) {
+      console.error('Request failed:', e);
+    }
   };
 
   const changeForm = () => {
@@ -101,6 +103,6 @@
     padding: 15px;
   }
   .change-form-btn {
-    color:midnightblue;
+    color: midnightblue;
   }
 </style>

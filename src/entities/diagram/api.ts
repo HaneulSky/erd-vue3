@@ -8,6 +8,5 @@ export const diagramApi = {
 
   update: (dto: DiagramDto) => api.put<DiagramDto>('/diagrams', dto),
 
-  delete: (id: number) => api.delete(`/diagrams/${id}`)
+  delete: (id: number) => api.delete(`/diagrams/${id}`),
 };
-

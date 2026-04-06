@@ -25,7 +25,7 @@
   />
 </template>
 <script setup lang="ts">
-import { computed } from 'vue'
+  import { computed } from 'vue';
   const props = defineProps<{
     scale: number;
     viewBox: {
@@ -36,13 +36,13 @@ import { computed } from 'vue'
     };
   }>();
 
-  const getPatternSizes = computed(() => 15 * props.scale) 
+  const getPatternSizes = computed(() => 15 * props.scale);
   const getPatterTransform = computed(() => {
-    return `translate(${props.viewBox.x % 15},${props.viewBox.y % 15})`
-  })
+    return `translate(${props.viewBox.x % 15},${props.viewBox.y % 15})`;
+  });
 
-  const getXRect = computed(() => props.viewBox.x - 1000)
-  const getYRect = computed(() => props.viewBox.y - 1000)
-  const getWidthRect = computed(() => props.viewBox.width + 1000)
-  const getHeightRect = computed(() => props.viewBox.height + 1000)
+  const getXRect = computed(() => props.viewBox.x - 1000);
+  const getYRect = computed(() => props.viewBox.y - 1000);
+  const getWidthRect = computed(() => props.viewBox.width + 1000);
+  const getHeightRect = computed(() => props.viewBox.height + 1000);
 </script>

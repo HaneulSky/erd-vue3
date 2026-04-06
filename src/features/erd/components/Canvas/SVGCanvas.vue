@@ -121,18 +121,22 @@
   });
   const observer = ref<ResizeObserver | null>(null);
   const tableWidth = ref<number>(200);
-    const svgCanvasBlock = ref<HTMLElement | null>(null);
+  const svgCanvasBlock = ref<HTMLElement | null>(null);
 
   const viewBoxValue = computed(() => {
     return `${viewBox.value.x} ${viewBox.value.y} ${viewBox.value.width} ${viewBox.value.height}`;
   });
 
-const onScaleButton = (
-  { viewBox: newViewBox, scale: newScale }: { viewBox: ViewBox; scale: number }
-) => {
-  viewBox.value = newViewBox;
-  scale.value = newScale;
-};
+  const onScaleButton = ({
+    viewBox: newViewBox,
+    scale: newScale,
+  }: {
+    viewBox: ViewBox;
+    scale: number;
+  }) => {
+    viewBox.value = newViewBox;
+    scale.value = newScale;
+  };
   const handleDrag = (event: MouseEvent) => {
     if (dragData.value.isDragging && dragData.value.activeItem) {
       const newX = event.clientX - dragData.value.offsetX;

@@ -14,7 +14,7 @@
       @create:field="createField"
       @update:field="updateField"
     />
-     <CreateDiagramModal />
+    <CreateDiagramModal />
   </div>
 </template>
 

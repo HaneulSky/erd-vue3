@@ -11,13 +11,13 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function fetchUser() {
     if (isLoading.value) return;
-    
+
     isLoading.value = true;
     try {
-      user.value = await usersApi.me(); 
+      user.value = await usersApi.me();
     } catch (e) {
       user.value = null;
-      console.error(e)
+      console.error(e);
     } finally {
       isLoading.value = false;
     }

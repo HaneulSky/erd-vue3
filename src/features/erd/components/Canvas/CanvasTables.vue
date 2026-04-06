@@ -52,8 +52,14 @@
     (e: 'start-drag', value: Dragdata): void;
   }>();
 
-  const getObjectX = (table: Entity) => props.dragData?.activeItem?.id === table.id ? props.dragData.activeItem.xAxis || 1 : table.xAxis || 1;
-  const getObjectY = (table: Entity) => props.dragData?.activeItem?.id === table.id ? props.dragData.activeItem.yAxis || 1 : table.yAxis || 1;
+  const getObjectX = (table: Entity) =>
+    props.dragData?.activeItem?.id === table.id
+      ? props.dragData.activeItem.xAxis || 1
+      : table.xAxis || 1;
+  const getObjectY = (table: Entity) =>
+    props.dragData?.activeItem?.id === table.id
+      ? props.dragData.activeItem.yAxis || 1
+      : table.yAxis || 1;
 
   const getBlockHeight = (table: Entity): number => {
     const headerHeight = 40;

@@ -14,7 +14,11 @@
       <ERDInput
         :value="field.name"
         @update:model-value="
-          $emit('update:field', { table: table.id, id: field.id, name: ($event.target as HTMLInputElement)?.value })
+          $emit('update:field', {
+            table: table.id,
+            id: field.id,
+            name: ($event.target as HTMLInputElement)?.value,
+          })
         "
       />
       <span>
@@ -51,8 +55,8 @@
   }>();
 
   const updateTable = (data: Partial<Entity>): void => {
-    emit('update:table', {...props.table, ...data})
-  }
+    emit('update:table', { ...props.table, ...data });
+  };
 </script>
 
 <style scoped>

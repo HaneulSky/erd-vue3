@@ -64,14 +64,14 @@
   const search = ref<string>('');
 
   const localValue = computed(() => {
-    if (search.value?.trim().length > 0){
+    if (search.value?.trim().length > 0) {
       return props.relations.filter(
         (rel) =>
           rel.source?.name?.toLowerCase().includes(search.value) ||
           rel.target?.name?.toLowerCase().includes(search.value) ||
           rel.datatype?.name?.toLowerCase().includes(search.value)
       );
-  }
+    }
 
     return props.relations;
   });

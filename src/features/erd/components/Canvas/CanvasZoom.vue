@@ -16,7 +16,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed } from 'vue';
+  import { computed } from 'vue';
 
   // TODO повторяшка
   interface ViewBox {
@@ -42,9 +42,9 @@ import { computed } from 'vue';
     (e: 'on-scale-button', value: { viewBox: ViewBox; scale: number }): void;
   }>();
 
-  const currentScale = computed(() => `${Math.round(100 * props.scale)}%`)
-  const isDisabledMaxScaleBtn = computed(() => props.scale === props.maxScale)
-  const isDisabledMinScaleBtn = computed(() => props.scale === props.minScale)
+  const currentScale = computed(() => `${Math.round(100 * props.scale)}%`);
+  const isDisabledMaxScaleBtn = computed(() => props.scale === props.maxScale);
+  const isDisabledMinScaleBtn = computed(() => props.scale === props.minScale);
 
   const onScaleButton = (type: 'plus' | 'minus') => {
     const viewBoxLocal: ViewBox = props.viewBox;

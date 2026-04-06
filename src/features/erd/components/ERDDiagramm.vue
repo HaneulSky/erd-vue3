@@ -60,8 +60,6 @@
     localStorageName: 'my-erd',
   });
 
-  
-
   const emit = defineEmits<{
     (e: 'edit-table', id: EmitEvents['edit-table']): void;
     (e: 'update:relation', value: EmitEvents['update:relation']): void;
@@ -78,7 +76,6 @@
   const editableTableId = ref<string | number | null>(null);
   const editableRelationId = ref<string | number | null>(null);
 
-
   const onEditTable = (id: EmitEvents['edit-table']) => emit('edit-table', id);
   const onUpdateRelation = (value: EmitEvents['update:relation']) => emit('update:relation', value);
   const onDeleteRelation = (value: EmitEvents['delete:relation']) => emit('delete:relation', value);
@@ -86,13 +83,10 @@
   const onCreateTable = () => emit('create:table');
   const onUpdateTable = (value: EmitEvents['update:table']) => emit('update:table', value);
   const onDeleteTable = (value: EmitEvents['delete:table']) => emit('delete:table', value);
-  const onCreateField = (value: EmitEvents['create:field']) => 
-    emit('create:field', value);
-  const onUpdateField = (value:EmitEvents['update:field']) => 
-    emit('update:field', value);
+  const onCreateField = (value: EmitEvents['create:field']) => emit('create:field', value);
+  const onUpdateField = (value: EmitEvents['update:field']) => emit('update:field', value);
   const onDragTable = (value: unknown) => emit('drag-table', value);
-
-  </script>
+</script>
 <style scoped>
   .erd-container {
     height: 100vh;

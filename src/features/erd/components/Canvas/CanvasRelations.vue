@@ -50,8 +50,10 @@
   const getMarkerStart = (relation: Relation): string => {
     const { sourceTable = null, targetTable = null } = getTablesByRelations(relation);
     if (!sourceTable || !targetTable) return '';
-    const isSourceAbove = sourceTable.yAxis && targetTable.yAxis ? sourceTable.yAxis > targetTable.yAxis : false;
-    const isVerticalStack = Math.abs((sourceTable.xAxis || 0) - (targetTable.xAxis || 0)) <= props.tableWidth;
+    const isSourceAbove =
+      sourceTable.yAxis && targetTable.yAxis ? sourceTable.yAxis > targetTable.yAxis : false;
+    const isVerticalStack =
+      Math.abs((sourceTable.xAxis || 0) - (targetTable.xAxis || 0)) <= props.tableWidth;
 
     const relationType = relation.datatype?.name;
     let marker = 'url(#crossbar-one)';
@@ -75,7 +77,8 @@
     const targetVisualCenter = (targetTable.xAxis || 0) + visualTableWidth / 2;
     const isSourceLeft = sourceVisualCenter < targetVisualCenter;
     const isSourceAbove = (sourceTable.yAxis || 0) > (targetTable.yAxis || 0);
-    const isVerticalStack = Math.abs((sourceTable.xAxis || 0) - (targetTable.xAxis || 0)) <= visualTableWidth;
+    const isVerticalStack =
+      Math.abs((sourceTable.xAxis || 0) - (targetTable.xAxis || 0)) <= visualTableWidth;
     const relationType = relation.datatype?.name;
     let marker = 'url(#crossbar-one)';
     if (relationType === 'MtM')

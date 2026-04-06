@@ -38,8 +38,8 @@
   </div>
 </template>
 <script setup lang="ts">
-import type { Entity } from '@/features/erd/types/Table.model';
-import ERDButton from '@/shared/ui/ERDButton.vue';
+  import type { Entity } from '@/features/erd/types/Table.model';
+  import ERDButton from '@/shared/ui/ERDButton.vue';
 
   const props = defineProps<{
     tableData: Entity;

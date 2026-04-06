@@ -17,6 +17,6 @@ export const useDiagramModalStore = defineStore('diagram-modal', () => {
     isCreateModalOpen,
     diagrams,
     selectedDiagramId,
-    setCreateModalOpen
+    setCreateModalOpen,
   };
 });

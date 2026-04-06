@@ -5,5 +5,5 @@ export interface CreateDiagramDto {
 export interface DiagramDto {
   id: number;
   name: string;
-  tables?: unknown[]
+  tables?: unknown[];
 }

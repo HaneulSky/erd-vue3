@@ -6,7 +6,10 @@
     class="app-select"
     :disabled="disabled"
   >
-    <option value="" disabled>
+    <option
+      value=""
+      disabled
+    >
       {{ label }}
     </option>
 
@@ -21,66 +24,66 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
+  import { computed } from 'vue';
 
-interface SelectItem {
-  id: string | number
-  name: string
-  [key: string]: unknown
-}
-
-const props = withDefaults(
-  defineProps<{
-    modelValue: string | number | SelectItem | null
-    list?: SelectItem[]
-    selectId: string
-    label?: string
-    returnObject?: boolean
-    keyPrefix?: string
-    disabled?: boolean
-  }>(),
-  {
-    list: () => [],
-    label: '-- Выберите из списка --',
-    returnObject: false,
-    keyPrefix: '',
-    disabled: false
+  interface SelectItem {
+    id: string | number;
+    name: string;
+    [key: string]: unknown;
   }
-)
 
-const emit = defineEmits<{
-  (e: 'update:modelValue', value: string | number | SelectItem | null): void
-}>()
-
-const localValue = computed({
-  get() {
-    if (!props.modelValue) return ''
-
-    if (props.returnObject) {
-      return props.modelValue
+  const props = withDefaults(
+    defineProps<{
+      modelValue: string | number | SelectItem | null;
+      list?: SelectItem[];
+      selectId: string;
+      label?: string;
+      returnObject?: boolean;
+      keyPrefix?: string;
+      disabled?: boolean;
+    }>(),
+    {
+      list: () => [],
+      label: '-- Выберите из списка --',
+      returnObject: false,
+      keyPrefix: '',
+      disabled: false,
     }
+  );
 
-    return props.modelValue
-  },
+  const emit = defineEmits<{
+    (e: 'update:modelValue', value: string | number | SelectItem | null): void;
+  }>();
 
-  set(newValue) {
-    if (newValue === '') {
-      emit('update:modelValue', null)
+  const localValue = computed({
+    get() {
+      if (!props.modelValue) return '';
 
-      return
-    }
+      if (props.returnObject) {
+        return props.modelValue;
+      }
 
-    if (props.returnObject) {
-      emit('update:modelValue', newValue as SelectItem)
-    } else {
-      emit('update:modelValue', newValue as string | number)
-    }
-  },
-})
+      return props.modelValue;
+    },
+
+    set(newValue) {
+      if (newValue === '') {
+        emit('update:modelValue', null);
+
+        return;
+      }
+
+      if (props.returnObject) {
+        emit('update:modelValue', newValue as SelectItem);
+      } else {
+        emit('update:modelValue', newValue as string | number);
+      }
+    },
+  });
 </script>
 
 <style scoped>
-.app-select {
-  font-size: 12px;
-}
+  .app-select {
+    font-size: 12px;
+  }
 </style>

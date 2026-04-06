@@ -63,7 +63,9 @@
         return-object
       />
     </div>
-    <ERDButton @click="$emit('delete:relation', { relation: relation.id })">Удалить связь</ERDButton>
+    <ERDButton @click="$emit('delete:relation', { relation: relation.id })"
+      >Удалить связь</ERDButton
+    >
   </div>
 </template>
 <script setup lang="ts">
@@ -86,15 +88,15 @@
   }>();
 
   const localValue = ref<Nullable<Relation>>({
-      id: null,
-      source: null,
-      target: null,
-      datatype: null,
-      sourceField: null,
-      targetField: null,
-      type: null,
-      from: null,
-      to: null,
+    id: null,
+    source: null,
+    target: null,
+    datatype: null,
+    sourceField: null,
+    targetField: null,
+    type: null,
+    from: null,
+    to: null,
   });
 
   const relationName = computed(() => {
@@ -127,7 +129,7 @@
       value.sourceField !== null &&
       value.targetField !== null
     );
-  }
+  };
 
   watch(
     () => props.relation,
