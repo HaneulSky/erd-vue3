@@ -1,10 +1,14 @@
 <template>
   <div class="login-page">
     <p>{{ formTitle }}</p>
+
     <AuthForm
       :is-register="isRegister"
+      :loading="isLoading"
+      :error="serverError"
       @on-submit="onSubmit"
     />
+
     <ERDButton
       class="change-form-btn"
       @click="changeForm"
@@ -13,100 +17,85 @@
     </ERDButton>
   </div>
 </template>
+
 <script setup lang="ts">
-  import { computed, ref } from 'vue';
-  import { useRouter, useRoute } from 'vue-router';
-  import AuthForm from './components/AuthForm.vue';
-  import { authApi } from '@/entities/user/api';
-  import { ApiError } from '@/shared/api/client';
-  import type { LoginDto, RegisterDto } from '@/entities/user/types';
-  import ERDButton from '@/shared/ui/ERDButton.vue';
-  import { useAuthStore } from '@/entities/user/model/useAuthStore';
+import { computed, ref } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useRouter, useRoute } from 'vue-router';
+import AuthForm from './components/AuthForm.vue';
+import ERDButton from '@/shared/ui/ERDButton.vue';
+import { useAuthStore } from '@/entities/user/model/useAuthStore';
+import type { LoginDto, RegisterDto } from '@/entities/user/types';
 
-  const authStore = useAuthStore();
+const authStore = useAuthStore();
 
-  const router = useRouter();
-  const route = useRoute();
+const { isLoading, serverError } = storeToRefs(authStore);
+const { submit, fetchUser } = authStore;
 
-  const isLoading = ref(false);
-  const serverError = ref('');
-  const isRegister = ref(false);
+const router = useRouter();
+const route = useRoute();
 
-  const formTitle = computed(() => (isRegister.value ? 'Регистрация' : 'Вход'));
-  const spanTitle = computed(() =>
-    isRegister.value ? 'Уже зарегистрированы?' : 'Еще не зарегистрированы?'
-  );
+const isRegister = ref(false);
 
-  const catchError = (e: unknown) => {
-    if (e instanceof ApiError) {
-      serverError.value = `Ошибка ${e.status}: ${e.message}`;
-    } else {
-      serverError.value = 'Неизвестная ошибка. Попробуйте позже.';
-    }
-  };
+const formTitle = computed(() =>
+  isRegister.value ? 'Регистрация' : 'Вход'
+);
 
-  const login = async (data: LoginDto) => {
-    isLoading.value = true;
+const spanTitle = computed(() =>
+  isRegister.value
+    ? 'Уже зарегистрированы?'
+    : 'Еще не зарегистрированы?'
+);
+
+const handleRedirect = () => {
+  const redirectPath = route.query.redirect;
+
+  if (
+    redirectPath &&
+    typeof redirectPath === 'string' &&
+    redirectPath.startsWith('/')
+  ) {
     try {
-      await authApi.login(data);
-    } catch (e) {
-      catchError(e);
-    } finally {
-      isLoading.value = false;
+      const url = new URL(redirectPath, window.location.origin);
+
+      return router.push(url.pathname);
+    } catch {
+      return router.push({ name: 'diagrams' });
     }
-  };
+  }
 
-  const register = async (data: RegisterDto) => {
-    isLoading.value = true;
-    try {
-      await authApi.register(data);
-    } catch (e) {
-      catchError(e);
-    } finally {
-      isLoading.value = false;
-    }
-  };
+  return router.push({ name: 'diagrams' });
+};
 
-  const onSubmit = async (data: LoginDto | RegisterDto) => {
-    try {
-      if (isRegister.value) {
-        await register(data);
-      } else {
-        await login(data);
-      }
+const onSubmit = async (data: LoginDto | RegisterDto) => {
+  try {
+    await submit(data, isRegister.value);
+    await fetchUser();
+    await handleRedirect();
+  } catch (e) {
+    console.error('Request failed:', e);
+  }
+};
 
-      await authStore.fetchUser();
-
-      const redirectPath = route.query.redirect;
-
-      if (redirectPath && typeof redirectPath === 'string') {
-          const url = new URL(redirectPath, window.location.origin);
-          router.push(url.pathname); 
-      } else {
-          router.push({ name: 'diagrams' });
-      }
-    } catch (e) {
-      console.error('Request failed:', e);
-    }
-  };
-
-  const changeForm = () => {
-    isRegister.value = !isRegister.value;
-  };
+const changeForm = () => {
+  isRegister.value = !isRegister.value;
+  authStore.serverError = '';
+};
 </script>
+
 <style scoped>
-  .login-page {
-    display: flex;
-    gap: 15px;
-    flex-direction: column;
-    align-items: center;
-    width: 300px;
-    border: var(--border);
-    box-shadow: 0 0 9px 0;
-    margin: 20px auto;
-    padding: 15px;
-  }
-  .change-form-btn {
-    color: midnightblue;
-  }
+.login-page {
+  display: flex;
+  gap: 15px;
+  flex-direction: column;
+  align-items: center;
+  width: 300px;
+  border: var(--border);
+  box-shadow: 0 0 9px 0;
+  margin: 20px auto;
+  padding: 15px;
+}
+.change-form-btn {
+  color: midnightblue;
+}
 </style>

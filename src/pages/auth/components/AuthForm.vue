@@ -20,7 +20,19 @@
       :type="passwordInputType"
       placeholder="Пароль"
       @input="errors.password = ''"
-    />
+    >
+    <template #append>
+      <button
+        type="button"
+        class="password-toggle"
+        @click="togglePassword"
+      >
+        <EyeIcon v-if="!passwordVisible" />
+        <EyeClosedIcon v-else />
+      </button>
+      
+    </template>
+    </ERDInput>
     <span
       v-show="errors.password"
       class="error"
@@ -28,68 +40,82 @@
     >
 
     <span
-      v-show="errors.server"
+      v-show="serverError"
       class="error"
-      >{{ errors.server }}</span
+      >{{ serverError }}</span
     >
-
-    <ERDButton @click="onSubmit">
-      {{ buttonTitle }}
+    <ERDButton :disabled="loading" @click="onSubmit">
+      {{ loading ? 'Загрузка...' : buttonTitle }}
     </ERDButton>
   </form>
 </template>
 
 <script setup lang="ts">
-  import ERDButton from '@/shared/ui/ERDButton.vue';
-  import ERDInput from '@/shared/ui/ERDInput.vue';
-  import { ref, computed } from 'vue';
+import ERDButton from '@/shared/ui/ERDButton.vue';
+import ERDInput from '@/shared/ui/ERDInput.vue';
+import EyeClosedIcon from '@/shared/ui/icons/EyeClosedIcon.vue';
+import EyeIcon from '@/shared/ui/icons/EyeIcon.vue';
+import { ref, computed } from 'vue';
 
-  const props = defineProps<{ isRegister: boolean }>();
+const props = defineProps<{
+  isRegister: boolean;
+  loading: boolean;
+  error: string;
+}>();
 
-  const emit = defineEmits<{
-    (e: 'on-submit', value: { name: string; password: string }): void;
-  }>();
+const emit = defineEmits<{
+  (e: 'on-submit', value: { name: string; password: string }): void;
+}>();
 
-  const name = ref('');
-  const password = ref('');
-  const passwordInputType = ref('password');
-  const errors = ref({ password: '', name: '', server: '' });
+const name = ref('');
+const password = ref('');
+const errors = ref({ password: '', name: '' });
+const passwordVisible = ref(false);
 
-  const buttonTitle = computed(() => (props.isRegister ? 'Зарегистрироваться' : 'Войти'));
+const passwordInputType = computed(() =>
+  passwordVisible.value ? 'text' : 'password'
+);
 
-  const checkPassword = (password: string) => {
-    if (password?.trim().length < 6 || password?.trim().length > 16) return false;
+const togglePassword = () => {
+  passwordVisible.value = !passwordVisible.value;
+};
 
-    return true;
-  };
+const buttonTitle = computed(() =>
+  props.isRegister ? 'Зарегистрироваться' : 'Войти'
+);
 
-  const checkLogin = (name: string) => {
-    if (name?.trim().length < 2 || name?.trim().length > 16) return false;
+const serverError = computed(() => props.error);
 
-    return true;
-  };
+const checkPassword = (password: string) => {
+  return password.trim().length >= 6 && password.trim().length <= 16;
+};
 
-  const onSubmit = async () => {
-    errors.value.password = '';
-    errors.value.name = '';
-    errors.value.server = '';
+const checkLogin = (name: string) => {
+  return name.trim().length >= 2 && name.trim().length <= 16;
+};
 
-    if (!checkPassword(password.value)) {
-      errors.value.password = 'Пароль: 6-16 символов';
+const onSubmit = () => {
+  errors.value.password = '';
+  errors.value.name = '';
 
-      return;
-    }
+  if (!checkPassword(password.value)) {
+    errors.value.password = 'Пароль: 6-16 символов';
 
-    if (!checkLogin(name.value)) {
-      errors.value.name = 'Логин: 2-16 символов';
+    return;
+  }
 
-      return;
-    }
+  if (!checkLogin(name.value)) {
+    errors.value.name = 'Логин: 2-16 символов';
 
-    emit('on-submit', { name: name.value, password: password.value });
-  };
+    return;
+  }
+
+  emit('on-submit', {
+    name: name.value,
+    password: password.value,
+  });
+};
 </script>
-
 <style scoped>
   .login-form {
     display: flex;

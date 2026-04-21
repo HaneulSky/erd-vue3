@@ -1,13 +1,19 @@
 <template>
-  <input
-    :value="displayValue"
-    :type="props.type"
-    :placeholder="props.placeholder"
-    class="app-input"
-    @input="onInput"
-    @blur="emit('blur', $event)"
-    @change="emit('change', $event)"
-  />
+  <div class="app-input-wrapper">
+    <input
+      :value="displayValue"
+      :type="props.type"
+      :placeholder="props.placeholder"
+      class="app-input"
+      @input="onInput"
+      @blur="emit('blur', $event)"
+      @change="emit('change', $event)"
+    />
+
+    <div v-if="$slots.append" class="app-input-append">
+      <slot name="append" />
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -56,21 +62,28 @@
 </script>
 
 <style scoped>
-  .app-input {
-    font-size: 12px;
-    padding: 8px 12px;
-    border: var(--border);
-    border-radius: 4px;
-    outline: none;
-    transition: border-color 0.2s;
-    width: 100%;
-  }
+.app-input-wrapper {
+  position: relative;
+  width: 100%;
+}
 
-  .app-input:focus {
-    border-color: #1b1b3a;
-  }
+.app-input {
+  font-size: 12px;
+  padding: 8px 12px;
+  padding-right: 36px;
+  border: var(--border);
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
 
-  .app-input::placeholder {
-    color: #999;
-  }
+.app-input-append {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+}
 </style>
