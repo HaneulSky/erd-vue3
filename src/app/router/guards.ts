@@ -11,6 +11,13 @@ export function setupRouterGuards(router: Router) {
       const token = getCookie('access_token');
       const requiresAuth = to.meta.requiresAuth as boolean;
 
+      console.log('Cookie check:', {
+        path: to.path,
+        requiresAuth: to.meta.requiresAuth,
+        tokenFound: !!token,
+        rawCookie: document.cookie.slice(0, 100) + '...' // Первые 100 символов
+      });
+
       if (requiresAuth && !token) {
         const redirectPath = to.path;
         next({ name: 'auth-login', query: { redirect: redirectPath } });
