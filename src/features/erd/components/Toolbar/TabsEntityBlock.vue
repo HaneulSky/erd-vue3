@@ -4,7 +4,7 @@
       <span>Имя:</span>
       <ERDInput
         :value="table.name"
-        @update:model-value="updateTable({ name: ($event.target as HTMLInputElement)?.value })"
+        @update:model-value="updateTable({ name: String($event || '') })"
       />
     </div>
     <div
@@ -17,7 +17,7 @@
           $emit('update:field', {
             table: table.id,
             id: field.id,
-            name: ($event.target as HTMLInputElement)?.value,
+            name: String($event || ''),
           })
         "
       />

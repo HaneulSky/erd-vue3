@@ -19,7 +19,6 @@
     <SVGCanvas
       :tables="props.tables"
       :relations="props.relations"
-      :fields-name="props.fieldsName"
       :local-storage-name="props.localStorageName"
       @drag-table="onDragTable"
       @edit:table="editableTableId = $event"
@@ -37,7 +36,6 @@
   interface Props {
     relations: Relation[];
     datatypes: Datatype[];
-    fieldsName?: string;
     localStorageName?: string;
     tables: Entity[];
   }
@@ -56,7 +54,6 @@
   }
 
   const props = withDefaults(defineProps<Props>(), {
-    fieldsName: 'fields',
     localStorageName: 'my-erd',
   });
 

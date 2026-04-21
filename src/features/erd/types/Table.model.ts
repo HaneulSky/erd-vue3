@@ -7,10 +7,6 @@ export enum RelationToRelation {
   'MtM' = 'MtM',
 }
 
-type OneFieldArray<T extends string = 'fields'> = {
-  [K in T]: Field[];
-};
-
 export interface Datatype {
   id: string | number;
   name: RelationType;
@@ -25,14 +21,15 @@ export interface Field {
   datatype?: Datatype;
 }
 
-export type Entity<T extends string = 'fields'> = {
+export interface Entity {
   id: number;
   name: string;
   rusName?: string;
   xAxis?: number;
   yAxis?: number;
   comment?: string;
-} & OneFieldArray<T>;
+  fields?: Field[]
+};
 
 export interface Relation {
   id: string | number;

@@ -311,8 +311,8 @@
       xAxis: 10,
       yAxis: 25,
     };
-    if (tables.value.length) {
-      const lastTable = tables.value.at(-1);
+    if (tables.value.length > 0) {
+      const lastTable = tables.value[tables.value.length - 1];
       lastTableCoords.xAxis = lastTable.xAxis + 100;
       lastTableCoords.yAxis = lastTable.yAxis + 100;
     }

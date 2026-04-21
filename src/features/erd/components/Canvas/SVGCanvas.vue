@@ -40,7 +40,6 @@
       <CanvasTables
         :tables="tables"
         :table-width="tableWidth"
-        :fields-name="fieldsName"
         :scale="scale"
         :view-box="viewBox"
         :drag-data="dragData"
@@ -89,7 +88,6 @@
     tables: Entity[];
     relations: Relation[];
     localStorageName: string;
-    fieldsName: keyof Entity;
   }>();
 
   const emit = defineEmits<{

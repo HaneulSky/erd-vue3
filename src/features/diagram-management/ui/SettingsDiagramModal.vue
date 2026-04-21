@@ -16,6 +16,7 @@
           </td>
           <td>
             <ERDSelect
+              v-model="setting"
               :list="[]"
               :select-id="`${diagram.id}-users-select`"
             />
@@ -58,6 +59,7 @@
 
   const diagramName = ref<string>('');
   const isSaving = ref(false);
+  const setting=ref(null);
 
   const closeModal = () => {
     isOpen.value = false;

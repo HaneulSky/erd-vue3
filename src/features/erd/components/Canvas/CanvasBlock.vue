@@ -23,11 +23,11 @@
       </ERDButton>
     </div>
     <div
-      v-if="props.tableData[props.fieldsName]"
+      v-if="props.tableData?.fields"
       class="table-block-data"
     >
       <div
-        v-for="field in props.tableData[props.fieldsName]"
+        v-for="field in props.tableData.fields"
         :key="field.id"
         class="table-block-data-field table-block-row"
       >
@@ -43,7 +43,6 @@
 
   const props = defineProps<{
     tableData: Entity;
-    fieldsName: keyof Entity;
   }>();
 
   defineEmits<{

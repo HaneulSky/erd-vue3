@@ -10,7 +10,6 @@
   >
     <CanvasBlock
       :table-data="table"
-      :fields-name="props.fieldsName"
       @mousedown.stop="handleTableMouseDown(table, $event)"
       @edit:table="$emit('edit:table', $event)"
       @update:field="$emit('update:field', $event)"
@@ -40,7 +39,6 @@
   const props = defineProps<{
     tables: Entity[];
     tableWidth: number;
-    fieldsName: keyof Entity;
     scale: number;
     viewBox: ViewBox;
     dragData: DragData;
