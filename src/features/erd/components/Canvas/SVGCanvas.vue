@@ -89,7 +89,7 @@
     tables: Entity[];
     relations: Relation[];
     localStorageName: string;
-    fieldsName: string;
+    fieldsName: keyof Entity;
   }>();
 
   const emit = defineEmits<{

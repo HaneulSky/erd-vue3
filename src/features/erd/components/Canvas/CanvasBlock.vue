@@ -43,7 +43,7 @@
 
   const props = defineProps<{
     tableData: Entity;
-    fieldsName: string;
+    fieldsName: keyof Entity;
   }>();
 
   defineEmits<{

@@ -77,7 +77,6 @@
     right: 2px;
     min-width: 100px;
     max-width: 100px;
-    padding: 0 2px;
     height: 20px;
     background: #dadada;
     z-index: 3;
@@ -86,9 +85,10 @@
   }
 
   button {
-    width: 17px;
-    height: 17px;
-    font-size: 15px;
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    line-height: 0.8;
     padding: 0;
     background: none;
     border: none;

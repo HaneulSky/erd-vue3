@@ -40,7 +40,7 @@
   const props = defineProps<{
     tables: Entity[];
     tableWidth: number;
-    fieldsName: string;
+    fieldsName: keyof Entity;
     scale: number;
     viewBox: ViewBox;
     dragData: DragData;
@@ -49,7 +49,7 @@
   const emit = defineEmits<{
     (e: 'edit:table', id: string | number): void;
     (e: 'update:field', value: unknown): void;
-    (e: 'start-drag', value: Dragdata): void;
+    (e: 'start-drag', value: DragData): void;
   }>();
 
   const getObjectX = (table: Entity) =>

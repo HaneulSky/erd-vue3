@@ -32,7 +32,9 @@ export const useDiagramStore = defineStore('diagram', () => {
   async function deleteDiagram(id: number) {
     try {
       await diagramApi.delete(id);
-    } catch (error) {}
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   return {

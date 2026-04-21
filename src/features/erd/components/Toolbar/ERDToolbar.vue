@@ -94,6 +94,7 @@
   .erd-toolbar {
     background-color: rgb(242, 226, 250, 0.3);
     border: var(--border);
+    border-top: none;
     width: 100%;
     height: 100%;
     overflow: hidden;
