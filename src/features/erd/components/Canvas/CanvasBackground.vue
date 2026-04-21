@@ -1,38 +1,48 @@
 <template>
-    <!-- Паттерн с трансформацией с точками для фона -->
-      <pattern
-        id="bg-pattern"
-        patternUnits="userSpaceOnUse"
-        :width="15 * props.scale"
-        :height="15 * props.scale"
-        :patternTransform="`translate(${props.viewBox.x % 15},${props.viewBox.y % 15})`"
-      >
-        <circle
-          cx="7.5"
-          cy="7.5"
-          r="1"
-          fill="#dadada"
-        />
-      </pattern>
+  <!-- Паттерн с трансформацией с точками для фона -->
+  <pattern
+    id="bg-pattern"
+    patternUnits="userSpaceOnUse"
+    :width="getPatternSizes"
+    :height="getPatternSizes"
+    :patternTransform="getPatterTransform"
+  >
+    <circle
+      cx="7.5"
+      cy="7.5"
+      r="1"
+      fill="#dadada"
+    />
+  </pattern>
 
-      <!-- Фоновая заливка -->
-      <rect
-        :x="viewBox.x - 1000"
-        :y="viewBox.y - 1000"
-        :width="viewBox.width + 1000"
-        :height="viewBox.height + 1000"
-        fill="url(#bg-pattern)"
-        pointer-events="none"
-      />
+  <rect
+    :x="getXRect"
+    :y="getYRect"
+    :width="getWidthRect"
+    :height="getHeightRect"
+    fill="url(#bg-pattern)"
+    pointer-events="none"
+  />
 </template>
 <script setup lang="ts">
-const props = defineProps<{
-    scale: number,
+  import { computed } from 'vue';
+  const props = defineProps<{
+    scale: number;
     viewBox: {
-        x: number,
-        y: number,
-        width: number,
-        height: number
-    }
-}>()
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    };
+  }>();
+
+  const getPatternSizes = computed(() => 15 * props.scale);
+  const getPatterTransform = computed(() => {
+    return `translate(${props.viewBox.x % 15},${props.viewBox.y % 15})`;
+  });
+
+  const getXRect = computed(() => props.viewBox.x - 1000);
+  const getYRect = computed(() => props.viewBox.y - 1000);
+  const getWidthRect = computed(() => props.viewBox.width + 1000);
+  const getHeightRect = computed(() => props.viewBox.height + 1000);
 </script>

@@ -1,3 +1,5 @@
+.env
+.eslintcache
 # Logs
 logs
 *.log

@@ -1,9 +1,16 @@
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-import App from './App.vue'
+import './app/styles/reset.css';
+import './app/styles/global.css';
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
+import App from './app/App.vue';
+import { router } from './app/router/router';
+import { setupRouterGuards } from './app/router/guards';
 
-const app = createApp(App)
+const app = createApp(App);
 
-app.use(createPinia())
+setupRouterGuards(router);
 
-app.mount('#app')
+app.use(router);
+app.use(createPinia());
+
+app.mount('#app');
