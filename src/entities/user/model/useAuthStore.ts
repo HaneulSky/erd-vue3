@@ -16,8 +16,8 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       user.value = await usersApi.me();
     } catch (e) {
+      console.error(`Fetch user failed: ${e}`);
       user.value = null;
-      console.error(e);
     } finally {
       isLoading.value = false;
     }

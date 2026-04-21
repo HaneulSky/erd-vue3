@@ -77,10 +77,14 @@
 
       await authStore.fetchUser();
 
-      router.push({
-        name: 'diagrams',
-        query: route.query.redirect ? { redirect: route.query.redirect } : {},
-      });
+      const redirectPath = route.query.redirect;
+
+      if (redirectPath && typeof redirectPath === 'string') {
+          const url = new URL(redirectPath, window.location.origin);
+          router.push(url.pathname); 
+      } else {
+          router.push({ name: 'diagrams' });
+      }
     } catch (e) {
       console.error('Request failed:', e);
     }

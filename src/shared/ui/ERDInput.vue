@@ -42,6 +42,7 @@
     if (props.modelValue !== undefined) {
       return props.modelValue;
     }
+
     return '';
   });
 

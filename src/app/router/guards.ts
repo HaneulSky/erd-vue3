@@ -1,10 +1,8 @@
 import type { Router, NavigationGuardNext, RouteLocationNormalized } from 'vue-router';
 
 function getCookie(name: string): string | null {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
-  return null;
+  const match = document.cookie.match(new RegExp('(^|\\s)' + name + '=([^;]+)'));
+  return match ? decodeURIComponent(match[2]) : null;
 }
 
 export function setupRouterGuards(router: Router) {
@@ -14,7 +12,8 @@ export function setupRouterGuards(router: Router) {
       const requiresAuth = to.meta.requiresAuth as boolean;
 
       if (requiresAuth && !token) {
-        next({ name: 'auth-login', query: { redirect: to.fullPath } });
+        const redirectPath = to.path;
+        next({ name: 'auth-login', query: { redirect: redirectPath } });
         return;
       }
 

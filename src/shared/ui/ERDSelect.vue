@@ -57,6 +57,7 @@ const displayValue = computed(() => {
   
   if (val === null || val === undefined) return '';
   if (props.returnObject && typeof val === 'object') return JSON.stringify(val);
+
   return val;
 });
 
@@ -68,6 +69,7 @@ const onChange = (event: Event) => {
     emit('update:modelValue', null);
     emit('update:value', null);
     emit('change', event);
+
     return;
   }
 
