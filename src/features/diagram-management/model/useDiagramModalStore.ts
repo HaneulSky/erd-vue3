@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
-import type { DiagramDto } from "@/entities/diagram/types";
+import type { DiagramDto } from '@/entities/diagram/types';
 
 export const useDiagramModalStore = defineStore('diagram-modal', () => {
   const isCreateModalOpen = ref(false);

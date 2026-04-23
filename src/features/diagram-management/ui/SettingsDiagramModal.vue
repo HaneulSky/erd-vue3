@@ -59,7 +59,7 @@
 
   const diagramName = ref<string>('');
   const isSaving = ref(false);
-  const setting=ref(null);
+  const setting = ref(null);
 
   const closeModal = () => {
     isOpen.value = false;

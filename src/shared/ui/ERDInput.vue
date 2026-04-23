@@ -10,7 +10,10 @@
       @change="emit('change', $event)"
     />
 
-    <div v-if="$slots.append" class="app-input-append">
+    <div
+      v-if="$slots.append"
+      class="app-input-append"
+    >
       <slot name="append" />
     </div>
   </div>
@@ -62,28 +65,28 @@
 </script>
 
 <style scoped>
-.app-input-wrapper {
-  position: relative;
-  width: 100%;
-}
+  .app-input-wrapper {
+    position: relative;
+    width: 100%;
+  }
 
-.app-input {
-  font-size: 12px;
-  padding: 8px 12px;
-  padding-right: 36px;
-  border: var(--border);
-  border-radius: 4px;
-  outline: none;
-  transition: border-color 0.2s;
-  width: 100%;
-}
+  .app-input {
+    font-size: 12px;
+    padding: 8px 12px;
+    padding-right: 36px;
+    border: var(--border);
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
 
-.app-input-append {
-  position: absolute;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-}
+  .app-input-append {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+  }
 </style>

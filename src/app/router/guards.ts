@@ -2,13 +2,11 @@ import type { Router } from 'vue-router';
 
 function getAuthToken(): string | null {
   // Пробуем прочитать из кук (работает, когда бэк и фронт на одном домене)
-  const cookieMatches = document.cookie.match(new RegExp(
-    `(?:^|; )access_token=([^;]*)`
-  ));
+  const cookieMatches = document.cookie.match(new RegExp(`(?:^|; )access_token=([^;]*)`));
   if (cookieMatches) {
     return decodeURIComponent(cookieMatches[1]);
   }
-  
+
   // Читаем из localStorage (работает если на разных доменах)
   return localStorage.getItem('access_token');
 }

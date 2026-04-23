@@ -28,8 +28,8 @@ export interface Entity {
   xAxis?: number;
   yAxis?: number;
   comment?: string;
-  fields?: Field[]
-};
+  fields?: Field[];
+}
 
 export interface Relation {
   id: string | number;

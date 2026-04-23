@@ -20,10 +20,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
   };
 
-  const submit = async (
-    data: LoginDto | RegisterDto,
-    isRegister: boolean
-  ) => {
+  const submit = async (data: LoginDto | RegisterDto, isRegister: boolean) => {
     isLoading.value = true;
     serverError.value = '';
 
@@ -35,7 +32,6 @@ export const useAuthStore = defineStore('auth', () => {
       if (response?.accessToken) {
         tokenService.set(response.accessToken);
       }
-
     } catch (e) {
       catchError(e);
       throw e;
