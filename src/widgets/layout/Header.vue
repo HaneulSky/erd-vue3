@@ -53,7 +53,7 @@
   const logout = async () => {
     try {
       await authApi.logout();
-      authStore.clearUser();
+      authStore.logout();
       router.push({ name: 'auth-login' });
     } catch (e) {
       console.error(e);

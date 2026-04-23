@@ -1,21 +1,29 @@
 import type { Router } from 'vue-router';
-import { useAuthStore } from '@/entities/user/model/useAuthStore';
+
+function getAuthToken(): string | null {
+  // Пробуем прочитать из кук (работает, когда бэк и фронт на одном домене)
+  const cookieMatches = document.cookie.match(new RegExp(
+    `(?:^|; )access_token=([^;]*)`
+  ));
+  if (cookieMatches) {
+    return decodeURIComponent(cookieMatches[1]);
+  }
+  
+  // Читаем из localStorage (работает если на разных доменах)
+  return localStorage.getItem('access_token');
+}
 
 export function setupRouterGuards(router: Router) {
-  router.beforeEach(async (to, from, next) => {
-    const authStore = useAuthStore();
+  router.beforeEach((to, from, next) => {
+    const token = getAuthToken();
     const requiresAuth = to.meta.requiresAuth as boolean;
 
-    if (requiresAuth && !authStore.isAuthenticated && !authStore.isLoading) {
-      await authStore.fetchUser();
-    }
-
-    if (requiresAuth && !authStore.isAuthenticated) {
+    if (requiresAuth && !token) {
       next({ name: 'auth-login', query: { redirect: to.path } });
       return;
     }
 
-    if (!requiresAuth && authStore.isAuthenticated && to.name === 'auth-login') {
+    if (!requiresAuth && token && to.name === 'auth-login') {
       next({ name: 'diagrams' });
       return;
     }
